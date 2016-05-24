@@ -6,5 +6,7 @@ angular.module('starter.controllers', ['ionic', 'starter.services'])
 .constant('INGRESOS_PARA_MOSTRAR_ENCUESTA', 8)
 
 .controller('CartaController', function ($scope, Carta) {
-    $scope.carta = Carta.getCarta();
+    Carta.getRecetaDeHoy(function(data){
+    	$scope.receta = data;
+    });
 });
