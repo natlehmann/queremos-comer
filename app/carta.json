@@ -1,0 +1,13 @@
+{
+	"primerPlato":[
+		{"id": 1, "nombre": "Milanesas de ternera", "categoria":"carnes", "tipo":"A", "complemento":"B"},
+		{"id": 2, "nombre": "Supremas de pollo", "categoria":"carnes", "tipo":"A", "complemento":"B"},
+		{"id": 3, "nombre": "Milanesas de berenjena", "categoria":"vegetales", "tipo":"B", "complemento":"A"}
+	],
+	
+	"guarnicion":[
+		{"id": 4, "nombre": "Ensalada de lechuga y zanahoria", "categoria":"vegetales", "tipo":"B", "complemento":"A"},
+		{"id": 5, "nombre": "Arroz blanco", "categoria":"cereales", "tipo":"A", "complemento":"B"},
+		{"id": 6, "nombre": "Ensalada de espinaca y parmesano", "categoria":"vegetales", "tipo":"B", "complemento":"A"}
+	]
+}

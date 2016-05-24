@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-    <title></title>
+    <title>Queremos comer!</title>
 
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
@@ -36,16 +36,21 @@
     <!-- build:js scripts/scripts.js -->
     <script src="scripts/app.js"></script>
     <script src="scripts/configuration.js"></script>
+    <script src="scripts/services.js"></script>
+    <script src="scripts/controllers.js"></script>
     <!-- endbuild -->
   </head>
   <body ng-app="starter">
 
     <ion-pane>
       <ion-header-bar class="bar-stable">
-        <h1 class="title">Ionic Blank Starter</h1>
+        <h1 class="title">Queremos comer!</h1>
       </ion-header-bar>
-      <ion-content>
-      </ion-content>
+      
+		<ion-content ng-controller="CartaController">
+	      HOLA ACA VA {{carta.platos}}
+		</ion-content>
+	
     </ion-pane>
   </body>
 </html>
