@@ -81,9 +81,25 @@ angular.module('starter.services', ['ionic'])
 		
 		var guarnicion = recetas.guarniciones[itGuarnicion.id][itGuarnicion.valor];
 		
+		incrementarIterador(it, recetas.primerosPlatos[it.id].length);
+		incrementarIterador(itGuarnicion, recetas.guarniciones[itGuarnicion.id].length);
+		
+		iteradorActualPP++;
+		if (iteradorActualPP >= iteradoresPP.length){
+			iteradorActualPP = 0;
+		}
+		
 		return {"primerPlato": receta, "guarnicion": guarnicion};
 	}
 	
+	
+	function incrementarIterador(iterador, limite) {
+		
+		iterador.valor++;
+		if (iterador.valor >= limite) {
+			iterador.valor = 0;
+		}
+	}
 	
 
   return {
