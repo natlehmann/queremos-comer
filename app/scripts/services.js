@@ -6,19 +6,19 @@ angular.module('starter.services', ['ionic'])
 .constant('VEGETALES', 'vegetales')
 .constant('PASTAS_CEREALES_LEGUMBRES', 'cereales')
 .constant('TIPO_A', 'A')
-.constant('TIPO_B', 'A')
+.constant('TIPO_B', 'B')
 
-.factory('Carta', function ($http, CARNES_LACTEOS_HUEVOS, VEGETALES, PASTAS_CEREALES_LEGUMBRES, TIPO_A) {
+.constant('CANTIDAD_CARNE', 3)
+
+.factory('Carta', function ($http, CARNES_LACTEOS_HUEVOS, VEGETALES, PASTAS_CEREALES_LEGUMBRES, TIPO_A, TIPO_B) {
 	
 	function getCarta() {
     	return $http.get('carta.json');    
     }
-
-  return {
-    
-    getRecetaDeHoy: function(callback) {
-    	
-    	var primerosPlatos = {
+	
+	function armarMapaRecetas(response) {
+		
+		var primerosPlatos = {
     			CARNES_LACTEOS_HUEVOS: [],
     			VEGETALES: [],
     			PASTAS_CEREALES_LEGUMBRES: []
@@ -28,34 +28,74 @@ angular.module('starter.services', ['ionic'])
     			TIPO_B: []
     	};
     	
+    	response.primerPlato.forEach(function(item){
+			
+			if (item.categoria === CARNES_LACTEOS_HUEVOS) {
+				primerosPlatos.CARNES_LACTEOS_HUEVOS.push(item);
+				
+			} else {
+				if (item.categoria === VEGETALES) {
+					primerosPlatos.VEGETALES.push(item);
+					
+				} else {
+					primerosPlatos.PASTAS_CEREALES_LEGUMBRES.push(item);
+				}
+			}
+		});
+    	
+    	response.guarnicion.forEach(function(item){
+			
+			if (item.tipo === TIPO_A) {
+				guarniciones.TIPO_A.push(item);
+				
+			} else {
+				guarniciones.TIPO_B.push(item);
+			}
+		});
+    	
+    	return {"primerosPlatos" : primerosPlatos, "guarniciones": guarniciones};
+	}
+	
+	var iteradoresPP = [
+	                  { "id" : 'CARNES_LACTEOS_HUEVOS', "valor": 0 },
+	                  { "id" : 'VEGETALES', "valor": 0 },
+	                  { "id" : 'PASTAS_CEREALES_LEGUMBRES', "valor": 0 }
+	                  ];
+	
+	var iteradoresGuarnicion = [
+		                  { "id" : 'TIPO_A', "valor": 0 },
+		                  { "id" : 'TIPO_B', "valor": 0 }
+		                  ];
+	
+	var iteradorActualPP = 0;
+	
+	function getSiguienteReceta(recetas) {
+		
+		var it = iteradoresPP[iteradorActualPP];
+		var receta = recetas.primerosPlatos[it.id][it.valor] ;
+		
+		var itGuarnicion = iteradoresGuarnicion[0];
+		if (receta.complemento === TIPO_B) {
+			itGuarnicion = iteradoresGuarnicion[1];
+		}
+		
+		var guarnicion = recetas.guarniciones[itGuarnicion.id][itGuarnicion.valor];
+		
+		return {"primerPlato": receta, "guarnicion": guarnicion};
+	}
+	
+	
+
+  return {
+    
+    getRecetaDeHoy: function(callback) {
+    	
     	getCarta().success(function (response) {
     		
-    		response.primerPlato.forEach(function(item){
-    			
-    			if (item.categoria === CARNES_LACTEOS_HUEVOS) {
-    				primerosPlatos.CARNES_LACTEOS_HUEVOS.push(item);
-    				
-    			} else {
-    				if (item.categoria === VEGETALES) {
-    					primerosPlatos.VEGETALES.push(item);
-    					
-    				} else {
-    					primerosPlatos.PASTAS_CEREALES_LEGUMBRES.push(item);
-    				}
-    			}
-    		});
+    		var recetas = armarMapaRecetas(response);	
+    		var receta = getSiguienteReceta(recetas);
     		
-    		response.guarnicion.forEach(function(item){
-    			
-    			if (item.tipo === TIPO_A) {
-    				guarniciones.TIPO_A.push(item);
-    				
-    			} else {
-    				guarniciones.TIPO_B.push(item);
-    			}
-    		});
-    		
-    		callback(primerosPlatos.VEGETALES[0].nombre + " con " + guarniciones.TIPO_A[0].nombre);
+    		callback(receta.primerPlato.nombre + " con " + receta.guarnicion.nombre);
     	});
     }
   };
