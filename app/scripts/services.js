@@ -137,8 +137,8 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
 		console.error("Error al realizar la query " + error.message);
 	}
 	
-	function errorCon() {
-		console.error("Error de conexion a la BD");
+	function errorCon(tx, error) {
+		console.error("Error de conexion a la BD " + error.message);
 	}
 	
 	function successCon() {
