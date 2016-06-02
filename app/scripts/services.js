@@ -1,6 +1,6 @@
 "use strict";
 
-angular.module('starter.services', ['ionic'])
+angular.module('starter.services', ['ionic', 'ngCordova'])
 
 .constant('CARNES_LACTEOS_HUEVOS', 'carnes')
 .constant('VEGETALES', 'vegetales')
@@ -8,9 +8,7 @@ angular.module('starter.services', ['ionic'])
 .constant('TIPO_A', 'A')
 .constant('TIPO_B', 'B')
 
-.constant('CANTIDAD_CARNE', 3)
-
-.factory('Carta', function ($http, CARNES_LACTEOS_HUEVOS, VEGETALES, PASTAS_CEREALES_LEGUMBRES, TIPO_A, TIPO_B) {
+.factory('Carta', function ($http, StorageService, CARNES_LACTEOS_HUEVOS, VEGETALES, PASTAS_CEREALES_LEGUMBRES, TIPO_A, TIPO_B) {
 	
 	function getCarta() {
     	return $http.get('carta.json');    
@@ -56,40 +54,33 @@ angular.module('starter.services', ['ionic'])
     	return {"primerosPlatos" : primerosPlatos, "guarniciones": guarniciones};
 	}
 	
-	var iteradoresPP = [
-	                  { "id" : 'CARNES_LACTEOS_HUEVOS', "valor": 0 },
-	                  { "id" : 'VEGETALES', "valor": 0 },
-	                  { "id" : 'PASTAS_CEREALES_LEGUMBRES', "valor": 0 }
-	                  ];
 	
-	var iteradoresGuarnicion = [
-		                  { "id" : 'TIPO_A', "valor": 0 },
-		                  { "id" : 'TIPO_B', "valor": 0 }
-		                  ];
-	
-	var iteradorActualPP = 0;
-	
-	function getSiguienteReceta(recetas) {
+	function getSiguienteReceta(recetas, callback) {
 		
-		var it = iteradoresPP[iteradorActualPP];
-		var receta = recetas.primerosPlatos[it.id][it.valor] ;
+		StorageService.getValor("iteradores", function(iteradores){
+			
+			var iteradoresJSON = JSON.parse(iteradores);
+			
+			var iteradorActualPP = iteradoresJSON.actual[0];
+			var it = iteradoresJSON.primerPlato[iteradorActualPP.valor];
+			var receta = recetas.primerosPlatos[it.id][it.valor] ;
+			
+			var itGuarnicion = iteradoresJSON.guarnicion[0];
+			if (receta.complemento === TIPO_B) {
+				itGuarnicion = iteradoresJSON.guarnicion[1];
+			}
+			
+			var guarnicion = recetas.guarniciones[itGuarnicion.id][itGuarnicion.valor];
+			
+			incrementarIterador(it, recetas.primerosPlatos[it.id].length);
+			incrementarIterador(itGuarnicion, recetas.guarniciones[itGuarnicion.id].length);
+			incrementarIterador(iteradorActualPP, 3);
+			
+			StorageService.guardar("iteradores", JSON.stringify(iteradoresJSON));
+			
+			callback( {"primerPlato": receta, "guarnicion": guarnicion} );
+		});
 		
-		var itGuarnicion = iteradoresGuarnicion[0];
-		if (receta.complemento === TIPO_B) {
-			itGuarnicion = iteradoresGuarnicion[1];
-		}
-		
-		var guarnicion = recetas.guarniciones[itGuarnicion.id][itGuarnicion.valor];
-		
-		incrementarIterador(it, recetas.primerosPlatos[it.id].length);
-		incrementarIterador(itGuarnicion, recetas.guarniciones[itGuarnicion.id].length);
-		
-		iteradorActualPP++;
-		if (iteradorActualPP >= iteradoresPP.length){
-			iteradorActualPP = 0;
-		}
-		
-		return {"primerPlato": receta, "guarnicion": guarnicion};
 	}
 	
 	
@@ -109,10 +100,101 @@ angular.module('starter.services', ['ionic'])
     	getCarta().success(function (response) {
     		
     		var recetas = armarMapaRecetas(response);	
-    		var receta = getSiguienteReceta(recetas);
+    		getSiguienteReceta(recetas, function(receta){
+    			
+    			callback(receta.primerPlato.nombre + " con " + receta.guarnicion.nombre);
+    		});
     		
-    		callback(receta.primerPlato.nombre + " con " + receta.guarnicion.nombre);
+    		
     	});
     }
   };
-});
+})
+
+
+.factory('StorageService', function () {
+	
+	function crear(clave, valor) {
+		
+		db.transaction(function(tx){
+			
+			tx.executeSql("INSERT INTO Storage(key,value) VALUES (?,?);", 
+					[clave, valor], insertQuerySuccess, queryError);
+			
+		}, errorCon, successCon);
+	}
+	
+	function insertQuerySuccess(tx, results) {
+        var len = results.rows.length;
+
+        for (var i = 0; i < len; i++) { 
+            console.log(results.rows.item(i).key + " - " + results.rows.item(i).value);
+        }
+    }
+	
+	function queryError(tx, error) {
+		alert("Error al realizar la query " + error.message);
+	}
+	
+	function errorCon() {
+		alert("Error de conexion a la BD");
+	}
+	
+	function successCon() {
+		console.log("Conexion a la BD exitosa");
+	}
+	
+	function modificar(clave, valor) {		
+		db.transaction(function(tx){
+			
+			tx.executeSql("UPDATE Storage SET value = ? WHERE key = ?;", 
+					[valor, clave], insertQuerySuccess, queryError);
+			
+		}, errorCon, successCon);
+	}
+	
+	function getValor(clave, callback) {
+		
+		db.transaction(function(tx){
+			
+			tx.executeSql("SELECT value FROM Storage WHERE key = ?;", [clave], 
+					function(tx, results){
+				
+						var resultado = null;
+						
+						if(results.rows.length > 0) {
+			                console.log("SELECTED -> " + results.rows.item(0).value);
+			                resultado = results.rows.item(0).value;
+			                
+			            } else {
+			                console.log("No results found");
+			            }	
+						
+						callback(resultado);
+					}, 
+					queryError);
+			
+		}, errorCon, successCon);
+	}
+	
+	return {
+	    
+		guardar: function(clave, valor) {
+	    	
+			getValor(clave, function(existente){
+				
+				if (existente) {				
+					modificar(clave, valor);
+				
+				} else {
+					crear(clave, valor);
+				}
+			});
+				    	
+		},
+		
+		getValor: getValor
+	};
+})
+
+;

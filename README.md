@@ -46,3 +46,10 @@ cd myApp
 yo ionic myIonicApp
 grunt serve
 ```
+
+### Compilación del proyecto
+
+* Instalar los siguientes plugins:
+```bash
+cordova plugin add https://github.com/brodysoft/Cordova-SQLitePlugin.git
+```
