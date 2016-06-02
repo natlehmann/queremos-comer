@@ -8,6 +8,8 @@
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/ionic/release/css/ionic.css" />
+    <link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css" />
+    
     <!-- endbower -->
     <!-- endbuild -->
     <link href="styles/style.css" rel="stylesheet">
@@ -23,6 +25,7 @@
     <script src="bower_components/angular-animate/angular-animate.js"></script>
     <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
     <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="bower_components/angular-material/angular-material.min.js"></script>
     <script src="bower_components/ionic/release/js/ionic.js"></script>
     <script src="bower_components/ionic/release/js/ionic-angular.js"></script>
     <script src="bower_components/ngCordova/dist/ng-cordova.js"></script>
@@ -51,9 +54,13 @@
       
 		<ion-content ng-controller="CartaController" class="home">
 		
-			<div class="card">
-	      		Hoy comemos {{receta}}
-			</div>
+			<md-card>
+				 <md-card-content>
+				   <h5>Hoy comemos</h5>
+				   <h1>{{receta}}</h1>
+				 </md-card-content>
+			</md-card>
+
 		</ion-content>
 	
     </ion-pane>
