@@ -8,7 +8,8 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
 .constant('TIPO_A', 'A')
 .constant('TIPO_B', 'B')
 
-.factory('Carta', function ($http, StorageService, CARNES_LACTEOS_HUEVOS, VEGETALES, PASTAS_CEREALES_LEGUMBRES, TIPO_A, TIPO_B) {
+.factory('Carta', function ($http, $q, StorageService, 
+		CARNES_LACTEOS_HUEVOS, VEGETALES, PASTAS_CEREALES_LEGUMBRES, TIPO_A, TIPO_B) {
 	
 	function getCarta() {
     	return $http.get('carta.json');    
@@ -57,7 +58,7 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
 	
 	function getSiguienteReceta(recetas, callback) {
 		
-		StorageService.getValor("iteradores", function(iteradores){
+		StorageService.getValor("iteradores").then( function(iteradores){
 			
 			var iteradoresJSON = JSON.parse(iteradores);
 			
@@ -112,7 +113,7 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
 })
 
 
-.factory('StorageService', function () {
+.factory('StorageService', function ($q) {
 	
 	function crear(clave, valor) {
 		
@@ -153,7 +154,9 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
 		}, errorCon, successCon);
 	}
 	
-	function getValor(clave, callback) {
+	function getValor(clave) {
+		
+		var deferred = $q.defer();
 		
 		db.transaction(function(tx){
 			
@@ -170,18 +173,20 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
 			                console.log("No results found");
 			            }	
 						
-						callback(resultado);
+						deferred.resolve(resultado);
 					}, 
 					queryError);
 			
 		}, errorCon, successCon);
+		
+		return deferred.promise;
 	}
 	
 	return {
 	    
 		guardar: function(clave, valor) {
 	    	
-			getValor(clave, function(existente){
+			getValor(clave).then( function(existente){
 				
 				if (existente) {				
 					modificar(clave, valor);

@@ -8,8 +8,8 @@ angular.module('starter.controllers', ['ionic', 'starter.services'])
 .controller('CartaController', function ($scope, Carta) {
     Carta.getRecetaDeHoy(function(data){
     	
-    	$scope.$apply(function () {
+    	//$scope.$apply(function () {
     		$scope.receta = data;    		
-    	});
+    	//});
     });
 });
