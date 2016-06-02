@@ -4,7 +4,7 @@
 var db = null;
 
 function errorCB() {
-    alert("DB access FAILED");
+    console.error("DB access FAILED");
 }
 
 function insertIfEmpty(tx, results) {
@@ -35,7 +35,7 @@ function populateDB(tx) {
 }
 
 function successCB() {
-    alert("DB access SUCCEEDED");
+    console.log("DB access SUCCEEDED");
 }
 
 // angular.module is a global place for creating, registering and retrieving Angular modules
@@ -61,17 +61,17 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers'])
     }
     
     
-    alert("window.cordova: " + window.cordova);
-    alert("window.SQLitePlugin: " + window.SQLitePlugin);
+    console.log("window.cordova: " + window.cordova);
+    console.log("window.SQLitePlugin: " + window.SQLitePlugin);
 
     if (window.cordova && window.SQLitePlugin) { // because Cordova is platform specific and doesn't work when you run ionic serve               
         db = window.sqlitePlugin.openDatabase({ "name": "queremosComer.db" }); //device - SQLite
-        alert("device db (SQLite) loaded");
+        console.log("device db (SQLite) loaded");
         
     } else {
 
         db = window.openDatabase("queremosComerDB", "1.0", "queremosComer.db", 100 * 1024 * 1024); // browser webSql, a fall-back for debugging
-        alert("browser db (WebSQL) loaded");
+        console.log("browser db (WebSQL) loaded");
     }
 
     db.transaction(populateDB, errorCB, successCB);
