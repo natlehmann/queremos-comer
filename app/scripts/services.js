@@ -153,14 +153,9 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
 		
 		StorageService.getValor("menu").then( function(menu){
 			
-			var recetaAhora = null;
-			
-			if (menu) {				
-				recetaAhora = getRecetaParaAhora(JSON.parse(menu));
-			}
-			
-			if (recetaAhora !== null) {
-				callback(recetaAhora);
+			if (menu && getRecetaParaAhora(JSON.parse(menu)) !== null) {		
+				
+				callback(JSON.parse(menu));
 				
 			} else {
 				
@@ -189,7 +184,7 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
 		    			StorageService.guardar("iteradores", JSON.stringify(iteradoresJSON));
 		    			StorageService.guardar("menu", JSON.stringify(menu));
 		    			
-		    			callback(getRecetaParaAhora(menu));
+		    			callback(menu);
 		    		});
 				});
 			}
@@ -203,7 +198,7 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
     	
     	setTimeout(function(){
     		getMenuSemanal(function(menu) {
-        		callback(menu);
+        		callback( getRecetaParaAhora(menu) );
         	});
         }, 1);
     },
@@ -211,6 +206,15 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
     getFechaHoy: function() {
     	var ahora = new Date();
     	return getAlmuerzoOCena(ahora) + " del " + formatDate(ahora, true);
+    },
+    
+    getMenuSemanal: function(callback) {
+    	
+    	setTimeout(function(){
+	    	getMenuSemanal(function(menu) {
+	    		callback( menu );
+	    	});	    	
+    	}, 1);
     }
   };
 })
