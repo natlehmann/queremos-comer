@@ -93,11 +93,11 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
 		var yyyy = date.getFullYear();
 
 		if(dd<10) {
-		    dd='0'+dd
+		    dd='0'+dd;
 		} 
 
 		if(mm<10) {
-		    mm='0'+mm
+		    mm='0'+mm;
 		} 
 
 		return yyyy + "/" + mm + "/" + dd;
@@ -109,14 +109,46 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
 		return receta.primerPlato.nombre + " con " + receta.guarnicion.nombre;
 	}
 	
+	function getRecetaParaAhora(menu) {
+		
+		var hoy = formatDate(new Date());
+		
+		var recetaDeHoy = null;
+		
+		menu.forEach( function(item){
+			if (item.dia === hoy) {
+				recetaDeHoy = item;
+			}
+		});
+		
+		if (recetaDeHoy !== null) {
+			
+			var ahora = "almuerzo";
+			var horas = new Date().getHours();
+			
+			if (horas > 15) {
+				ahora = "cena";
+			}
+			
+			recetaDeHoy = recetaDeHoy.recetas[ahora];
+		}
+		
+		return recetaDeHoy;
+	}
+	
 	
 	function getMenuSemanal(callback) {
 		
 		StorageService.getValor("menu").then( function(menu){
 			
-			if (menu) {
-				// TODO: AGREGAR CHEQUEO DE FECHA
-				callback(JSON.parse(menu));
+			var recetaAhora = null;
+			
+			if (menu) {				
+				recetaAhora = getRecetaParaAhora(JSON.parse(menu));
+			}
+			
+			if (recetaAhora !== null) {
+				callback(recetaAhora);
 				
 			} else {
 				
@@ -145,7 +177,7 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
 		    			StorageService.guardar("iteradores", JSON.stringify(iteradoresJSON));
 		    			StorageService.guardar("menu", JSON.stringify(menu));
 		    			
-		    			callback(menu);
+		    			callback(getRecetaParaAhora(menu));
 		    		});
 				});
 			}
@@ -161,7 +193,7 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
     		getMenuSemanal(function(menu) {
         		callback(menu);
         	});
-        }, 5);
+        }, 1);
 
     	
     }
