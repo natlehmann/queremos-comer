@@ -29,7 +29,7 @@ function insertIfEmpty(tx, results) {
 }
 
 function populateDB(tx) {
-//	tx.executeSql("DROP TABLE IF EXISTS Storage");
+	tx.executeSql("DROP TABLE IF EXISTS Storage");
     tx.executeSql("CREATE TABLE IF NOT EXISTS Storage (key text primary key, value text)");
     tx.executeSql("SELECT * FROM Storage;", [], insertIfEmpty, errorCB);
 }

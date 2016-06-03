@@ -11,6 +11,10 @@ angular.module('starter.controllers', ['ionic', 'starter.services'])
     	//$scope.$apply(function () {
     		$scope.receta = data;   
     		$scope.ahora = Carta.getFechaHoy();
+    		
+    		$scope.verMenu = function() {
+    			alert("hola");
+    		};
     	//});
     });
 });

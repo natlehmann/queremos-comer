@@ -209,7 +209,7 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
     },
     
     getFechaHoy: function() {
-    	var ahora = new Date;
+    	var ahora = new Date();
     	return getAlmuerzoOCena(ahora) + " del " + formatDate(ahora, true);
     }
   };

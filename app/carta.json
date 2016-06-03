@@ -3,12 +3,25 @@
 		{"id": 1, "nombre": "Milanesas de ternera", "categoria":"carnes", "tipo":"A", "complemento":"B"},
 		{"id": 2, "nombre": "Supremas de pollo", "categoria":"carnes", "tipo":"A", "complemento":"B"},
 		{"id": 3, "nombre": "Milanesas de berenjena", "categoria":"vegetales", "tipo":"B", "complemento":"A"},
-		{"id": 7, "nombre": "Fideos salteados con vegetales", "categoria":"cereales", "tipo":"A", "complemento":"B"}
+		{"id": 7, "nombre": "Fideos salteados con vegetales", "categoria":"cereales", "tipo":"A", "complemento":"B"},		
+		{"id": 8, "nombre": "Berenjenas gratinadas", "categoria":"vegetales", "tipo":"A", "complemento":"B"},
+		{"id": 9, "nombre": "Tarta de atún", "categoria":"carnes", "tipo":"A", "complemento":"B"},
+		{"id": 10, "nombre": "Tarta de choclo", "categoria":"vegetales", "tipo":"A", "complemento":"B"},
+		{"id": 11, "nombre": "Guiso de lentejas", "categoria":"cereales", "tipo":"A", "complemento":"B"},
+		{"id": 12, "nombre": "Tomates rellenos con atún", "categoria":"carnes", "tipo":"A", "complemento":"B"},
+		{"id": 13, "nombre": "Ravioles con tomate y albahaca", "categoria":"cereales", "tipo":"A", "complemento":"B"},
+		{"id": 14, "nombre": "Rodajas de calabaza a la pizza", "categoria":"vegetales", "tipo":"B", "complemento":"A"},
+		{"id": 15, "nombre": "Pizza integral de vegetales", "categoria":"cereales", "tipo":"A", "complemento":"B"}
 	],
 	
 	"guarnicion":[
 		{"id": 4, "nombre": "Ensalada de lechuga y zanahoria", "categoria":"vegetales", "tipo":"B", "complemento":"A"},
 		{"id": 5, "nombre": "Arroz blanco", "categoria":"cereales", "tipo":"A", "complemento":"B"},
-		{"id": 6, "nombre": "Ensalada de espinaca y parmesano", "categoria":"vegetales", "tipo":"B", "complemento":"A"}
+		{"id": 6, "nombre": "Ensalada de espinaca y parmesano", "categoria":"vegetales", "tipo":"B", "complemento":"A"},		
+		{"id": 16, "nombre": "Ensalada de tomate", "categoria":"vegetales", "tipo":"B", "complemento":"A"},
+		{"id": 17, "nombre": "Ensalada de choclo, arroz y arvejas", "categoria":"vegetales", "tipo":"A", "complemento":"B"},
+		{"id": 18, "nombre": "Puré de papas", "categoria":"vegetales", "tipo":"A", "complemento":"B"},
+		{"id": 19, "nombre": "Puré de calabaza", "categoria":"vegetales", "tipo":"B", "complemento":"A"},
+		{"id": 20, "nombre": "Dados de calabaza al horno", "categoria":"vegetales", "tipo":"B", "complemento":"A"}
 	]
 }
