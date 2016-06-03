@@ -56,31 +56,24 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
 	}
 	
 	
-	function getSiguienteReceta(recetas, callback) {
+	function getSiguienteReceta(recetas, iteradoresJSON) {
 		
-		StorageService.getValor("iteradores").then( function(iteradores){
-			
-			var iteradoresJSON = JSON.parse(iteradores);
-			
-			var iteradorActualPP = iteradoresJSON.actual[0];
-			var it = iteradoresJSON.primerPlato[iteradorActualPP.valor];
-			var receta = recetas.primerosPlatos[it.id][it.valor] ;
-			
-			var itGuarnicion = iteradoresJSON.guarnicion[0];
-			if (receta.complemento === TIPO_B) {
-				itGuarnicion = iteradoresJSON.guarnicion[1];
-			}
-			
-			var guarnicion = recetas.guarniciones[itGuarnicion.id][itGuarnicion.valor];
-			
-			incrementarIterador(it, recetas.primerosPlatos[it.id].length);
-			incrementarIterador(itGuarnicion, recetas.guarniciones[itGuarnicion.id].length);
-			incrementarIterador(iteradorActualPP, 3);
-			
-			StorageService.guardar("iteradores", JSON.stringify(iteradoresJSON));
-			
-			callback( {"primerPlato": receta, "guarnicion": guarnicion} );
-		});
+		var iteradorActualPP = iteradoresJSON.actual[0];
+		var it = iteradoresJSON.primerPlato[iteradorActualPP.valor];
+		var receta = recetas.primerosPlatos[it.id][it.valor] ;
+		
+		var itGuarnicion = iteradoresJSON.guarnicion[0];
+		if (receta.complemento === TIPO_B) {
+			itGuarnicion = iteradoresJSON.guarnicion[1];
+		}
+		
+		var guarnicion = recetas.guarniciones[itGuarnicion.id][itGuarnicion.valor];
+		
+		incrementarIterador(it, recetas.primerosPlatos[it.id].length);
+		incrementarIterador(itGuarnicion, recetas.guarniciones[itGuarnicion.id].length);
+		incrementarIterador(iteradorActualPP, 3);
+		
+		return {"primerPlato": receta, "guarnicion": guarnicion};
 		
 	}
 	
@@ -93,21 +86,84 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
 		}
 	}
 	
+	function formatDate(date) {
+		
+		var dd = date.getDate();
+		var mm = date.getMonth()+1; //January is 0!
+		var yyyy = date.getFullYear();
+
+		if(dd<10) {
+		    dd='0'+dd
+		} 
+
+		if(mm<10) {
+		    mm='0'+mm
+		} 
+
+		return yyyy + "/" + mm + "/" + dd;
+	}
+	
+	
+	function formatReceta(receta) {
+		
+		return receta.primerPlato.nombre + " con " + receta.guarnicion.nombre;
+	}
+	
+	
+	function getMenuSemanal(callback) {
+		
+		StorageService.getValor("menu").then( function(menu){
+			
+			if (menu) {
+				// TODO: AGREGAR CHEQUEO DE FECHA
+				callback(JSON.parse(menu));
+				
+			} else {
+				
+				getCarta().success(function (response) {
+		    		
+					menu = [];
+		    		var recetas = armarMapaRecetas(response);
+		    		
+		    		StorageService.getValor("iteradores").then( function(iteradores){
+		    			
+		    			var fecha = new Date();
+		    			
+		    			var iteradoresJSON = JSON.parse(iteradores);
+		    			for (var i=0; i < 7; i++) {
+		    				
+		    				var receta1 = getSiguienteReceta(recetas, iteradoresJSON);
+		    				var receta2 = getSiguienteReceta(recetas, iteradoresJSON);
+		    				
+		    				menu.push({"dia": formatDate(fecha), 
+		    					"recetas": {"almuerzo": formatReceta(receta1), 
+		    						"cena": formatReceta(receta2)}});
+		    				
+		    				fecha.setDate(fecha.getDate() + 1);
+		    			}
+		    			
+		    			StorageService.guardar("iteradores", JSON.stringify(iteradoresJSON));
+		    			StorageService.guardar("menu", JSON.stringify(menu));
+		    			
+		    			callback(menu);
+		    		});
+				});
+			}
+		});
+	}
+	
 
   return {
     
     getRecetaDeHoy: function(callback) {
     	
-    	getCarta().success(function (response) {
-    		
-    		var recetas = armarMapaRecetas(response);	
-    		getSiguienteReceta(recetas, function(receta){
-    			
-    			callback(receta.primerPlato.nombre + " con " + receta.guarnicion.nombre);
-    		});
-    		
-    		
-    	});
+    	setTimeout(function(){
+    		getMenuSemanal(function(menu) {
+        		callback(menu);
+        	});
+        }, 5);
+
+    	
     }
   };
 })
