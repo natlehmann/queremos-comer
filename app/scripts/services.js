@@ -86,7 +86,7 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
 		}
 	}
 	
-	function formatDate(date) {
+	function formatDate(date, reverseFormat) {
 		
 		var dd = date.getDate();
 		var mm = date.getMonth()+1; //January is 0!
@@ -99,8 +99,26 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
 		if(mm<10) {
 		    mm='0'+mm;
 		} 
-
-		return yyyy + "/" + mm + "/" + dd;
+		
+		if (reverseFormat) {
+			return dd + "/" + mm + "/" + yyyy;
+			
+		} else {
+			return yyyy + "/" + mm + "/" + dd;
+		}
+	}
+	
+	
+	function getAlmuerzoOCena(date) {
+		
+		var ahora = "almuerzo";
+		var horas = date.getHours();
+		
+		if (horas > 15) {
+			ahora = "cena";
+		}
+		
+		return ahora;
 	}
 	
 	
@@ -123,13 +141,7 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
 		
 		if (recetaDeHoy !== null) {
 			
-			var ahora = "almuerzo";
-			var horas = new Date().getHours();
-			
-			if (horas > 15) {
-				ahora = "cena";
-			}
-			
+			var ahora = getAlmuerzoOCena(new Date());			
 			recetaDeHoy = recetaDeHoy.recetas[ahora];
 		}
 		
@@ -194,8 +206,11 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
         		callback(menu);
         	});
         }, 1);
-
-    	
+    },
+    
+    getFechaHoy: function() {
+    	var ahora = new Date;
+    	return getAlmuerzoOCena(ahora) + " del " + formatDate(ahora, true);
     }
   };
 })

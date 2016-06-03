@@ -9,7 +9,8 @@ angular.module('starter.controllers', ['ionic', 'starter.services'])
     Carta.getRecetaDeHoy(function(data){
     	
     	//$scope.$apply(function () {
-    		$scope.receta = data;    		
+    		$scope.receta = data;   
+    		$scope.ahora = Carta.getFechaHoy();
     	//});
     });
 });
